@@ -34,15 +34,15 @@ const {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-router.post('/register', validBody, duplicateName, async (req, res, next) => {
+router.post('/register', validBody, duplicateName, async (req, res) => {
   try {
     const { username, password } = req.body;
     const hash = bcrypt.hashSync(password, 4);
     const user = { username, password: hash };
-    const createdUser = await usersModel.add(user);
+    const createdUser = await usersModel.insert(user);
     res.status(201).json(createdUser);
-  } catch (error) {
-    next(error);
+  } catch {
+    res.status(500).json({ message: 'server error, please try again later' });
   }
 });
 
@@ -69,7 +69,7 @@ router.post('/register', validBody, duplicateName, async (req, res, next) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
-router.post('/login', validBody, verifyUsernameExists, (req, res, next) => {
+router.post('/login', validBody, verifyUsernameExists, (req, res) => {
   const { username, password } = req.body;
   usersModel
     .findBy({ username })
@@ -81,8 +81,8 @@ router.post('/login', validBody, verifyUsernameExists, (req, res, next) => {
         res.status(401).json({ message: 'invalid credentials' });
       }
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      res.status(500).json({ message: 'server error, please try again later' });
     });
 });
 

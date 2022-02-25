@@ -4,7 +4,7 @@ const { JWT_SECRET } = require('../secrets');
 
 const duplicateName = async (req, res, next) => {
   const username = req.body.username.trim();
-  const [user] = await usersModel.findBy({ username });
+  const user = await usersModel.findBy({ username });
   if (user.username === username) {
     res.status(401).json({ message: 'username taken' });
   } else {
