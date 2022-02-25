@@ -9,30 +9,14 @@ module.exports = {
   deleteUser,
 };
 
-function findAll() {
-  return db('users');
-}
+function findAll() {}
 
-function findById(id) {
-  return db('users').where('id', id).first();
-}
+function findById(id) {}
 
-function findBy(filter) {
-  return db('users').where(filter);
-}
+function findBy(filter) {}
 
-async function insert(user) {
-  const [id] = await db('users').insert(user);
-  return findById(id);
-}
+async function insert(user) {}
 
-async function updateName(id, changes) {
-  await db('users').update({ name: changes.name }).where('id', id);
-  return findById(id);
-}
+async function updateName(id, changes) {}
 
-async function deleteUser(id) {
-  const result = await findById(id);
-  await db('users').where('id', id).del();
-  return result;
-}
+async function deleteUser(id) {}
