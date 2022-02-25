@@ -70,36 +70,36 @@ describe('authentication', () => {
     test('[7] responds with the correct message on valid credentials', async () => {
       const result = await request(server)
         .post('/api/auth/register')
-        .send({ username: 'sammy', password: '1234' });
-      expect(result.body).toHaveProperty('username', 'sammy');
+        .send({ username: 'sara', password: '1234' });
+      expect(result.body).toHaveProperty('username', 'sara');
     });
   });
   describe('[POST] /api/auth/login', () => {
     test('[8] responds with correct message on valid credentials', async () => {
       await request(server)
         .post('/api/auth/register')
-        .send({ username: 'sammy', password: '1234' });
+        .send({ username: 'cammie', password: '1234' });
       const result = await request(server)
         .post('/api/auth/login')
-        .send({ username: 'sammy', password: '1234' });
-      expect(result.body.message).toMatch(/welcome, sammy/i);
+        .send({ username: 'cammie', password: '1234' });
+      expect(result.body.message).toMatch(/welcome, cammie/i);
     });
     test('[9] responds with correct message on invalid password', async () => {
       await request(server)
         .post('/api/auth/register')
-        .send({ username: 'sammy', password: '1234' });
+        .send({ username: 'jenny', password: '1234' });
       const result = await request(server)
         .post('/api/auth/login')
-        .send({ username: 'sammy', password: '8765' });
+        .send({ username: 'jenny', password: '8765' });
       expect(result.body.message).toMatch(/invalid credentials/i);
     });
     test('[10] responds with correct message on invalid username', async () => {
       await request(server)
         .post('/api/auth/register')
-        .send({ username: 'sammy', password: '1234' });
+        .send({ username: 'ally', password: '1234' });
       const result = await request(server)
         .post('/api/auth/login')
-        .send({ username: 'sally', password: '1234' });
+        .send({ username: 'allison', password: '1234' });
       expect(result.body.message).toMatch(/invalid credentials/i);
     });
   });
