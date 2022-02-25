@@ -17,27 +17,57 @@ test('[0] sanity', () => {
   expect(true).toBe(true);
 });
 
+describe('test the usersModel', () => {
+  test('[1] the table is empty', async () => {
+    const books = await db('users');
+    expect(books).toHaveLength(0);
+  });
+  test('[2] multiple users get inserted', async () => {
+    await usersModel.insert({
+      username: 'sammysosa',
+      password: '12345',
+    });
+    let books = await db('users');
+    expect(books).toHaveLength(1);
+
+    await usersModel.insert({
+      username: 'charlie',
+      password: '7890',
+    });
+    books = await db('users');
+    expect(books).toHaveLength(2);
+  });
+  test('[3] can get by id', async () => {
+    const { id } = await usersModel.insert({
+      username: 'paul',
+      password: '12345',
+    });
+    const result = await usersModel.findById(id);
+    expect(result).toHaveProperty('username', 'paul');
+  });
+});
+
 describe('authentication', () => {
   describe('[POST] /api/auth/register', () => {
-    test('[1] responds with correct message on empty body', async () => {
+    test('[4] responds with correct message on empty body', async () => {
       const result = await request(server)
         .post('/api/auth/register')
         .send({ username: '', password: '' });
       expect(result.body.message).toMatch(/username and password required/i);
     });
-    test('[2] responds with correct message on empty username', async () => {
+    test('[5] responds with correct message on empty username', async () => {
       const result = await request(server)
         .post('/api/auth/register')
         .send({ username: '', password: '12345' });
       expect(result.body.message).toMatch(/username and password required/i);
     });
-    test('[3] responds with correct message on empty password', async () => {
+    test('[6] responds with correct message on empty password', async () => {
       const result = await request(server)
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '' });
       expect(result.body.message).toMatch(/username and password required/i);
     });
-    test('[4] responds with the correct message on valid credentials', async () => {
+    test('[7] responds with the correct message on valid credentials', async () => {
       const result = await request(server)
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '1234' });
@@ -45,7 +75,7 @@ describe('authentication', () => {
     });
   });
   describe('[POST] /api/auth/login', () => {
-    test('[5] responds with correct message on valid credentials', async () => {
+    test('[8] responds with correct message on valid credentials', async () => {
       await request(server)
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '1234' });
@@ -54,16 +84,16 @@ describe('authentication', () => {
         .send({ username: 'sammy', password: '1234' });
       expect(result.body.message).toMatch(/welcome, sammy/i);
     });
-    test('[6] responds with correct message on invalid password', async () => {
+    test('[9] responds with correct message on invalid password', async () => {
       await request(server)
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '1234' });
       const result = await request(server)
         .post('/api/auth/login')
-        .send({ username: 'sammy', password: '9876' });
+        .send({ username: 'sammy', password: '8765' });
       expect(result.body.message).toMatch(/invalid credentials/i);
     });
-    test('[7] responds with correct message on invalid username', async () => {
+    test('[10] responds with correct message on invalid username', async () => {
       await request(server)
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '1234' });

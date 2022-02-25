@@ -1,6 +1,4 @@
-const jwt = require('jsonwebtoken');
 const usersModel = require('../users/users-model');
-const { JWT_SECRET } = require('../secrets');
 
 const duplicateName = async (req, res, next) => {
   const username = req.body.username.trim();

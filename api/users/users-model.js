@@ -9,7 +9,9 @@ module.exports = {
   deleteUser,
 };
 
-function findAll() {}
+function findAll() {
+  return db('users');
+}
 
 function findById(id) {
   return db('users').where('id', id).first();
@@ -24,6 +26,15 @@ async function insert(user) {
   return findById(id);
 }
 
-async function updateName(id, changes) {}
+// created for later functionality
+async function updateName(id, changes) {
+  await db('users').update({ name: changes.name }).where('id', id);
+  return findById(id);
+}
 
-async function deleteUser(id) {}
+// created for later functionality
+async function deleteUser(id) {
+  const result = await findById(id);
+  await db('users').where('id', id).del();
+  return result;
+}
