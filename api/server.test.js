@@ -17,7 +17,7 @@ test('[0] sanity', () => {
   expect(true).toBe(true);
 });
 
-describe('authentication for register', () => {
+describe('authentication', () => {
   describe('[POST] /api/auth/register', () => {
     test('[1] responds with correct message on empty body', async () => {
       const result = await request(server)
@@ -42,6 +42,35 @@ describe('authentication for register', () => {
         .post('/api/auth/register')
         .send({ username: 'sammy', password: '1234' });
       expect(result.body).toHaveProperty('username', 'sammy');
+    });
+  });
+  describe('[POST] /api/auth/login', () => {
+    test('[5] responds with correct message on valid credentials', async () => {
+      await request(server)
+        .post('/api/auth/register')
+        .send({ username: 'sammy', password: '1234' });
+      const result = await request(server)
+        .post('/api/auth/login')
+        .send({ username: 'sammy', password: '1234' });
+      expect(result.body.message).toMatch(/welcome, sammy/i);
+    });
+    test('[6] responds with correct message on invalid password', async () => {
+      await request(server)
+        .post('/api/auth/register')
+        .send({ username: 'sammy', password: '1234' });
+      const result = await request(server)
+        .post('/api/auth/login')
+        .send({ username: 'sammy', password: '9876' });
+      expect(result.body.message).toMatch(/invalid credentials/i);
+    });
+    test('[7] responds with correct message on invalid username', async () => {
+      await request(server)
+        .post('/api/auth/register')
+        .send({ username: 'sammy', password: '1234' });
+      const result = await request(server)
+        .post('/api/auth/login')
+        .send({ username: 'sally', password: '1234' });
+      expect(result.body.message).toMatch(/invalid credentials/i);
     });
   });
 });
